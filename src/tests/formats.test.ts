@@ -47,3 +47,29 @@ describe('supported formats', () => {
 });
 
 describe('GTIN check digit math', () => {
+  it('accepts known-good numbers across lengths', () => {
+    expect(gtinCheckDigitValid('4006381333931')).toBe(true); // EAN-13
+    expect(gtinCheckDigitValid('24032155')).toBe(true); // EAN-8
+    expect(gtinCheckDigitValid('036000291452')).toBe(true); // UPC-A
+    expect(gtinCheckDigitValid('15400141288763')).toBe(true); // ITF-14
+    expect(gtinCheckDigitValid('00950110153403')).toBe(true); // GS1 AI(01)
+  });
+
+  it('rejects bad check digits', () => {
+    expect(gtinCheckDigitValid('4006381333930')).toBe(false);
+    expect(gtinCheckDigitValid('24032159')).toBe(false);
+  });
+
+  it('computes the expected check digit', () => {
+    expect(computeGtinCheckDigit('400638133393')).toBe(1);
+    expect(computeGtinCheckDigit('2403215')).toBe(5);
+  });
+});
+
+describe('per-format validation', () => {
+  it('code128: rejects non-ASCII and control characters', () => {
+    expect(validateValue('code128', 'Hello-123')).toBeNull();
+    expect(validateValue('code128', 'curly ‘quote’')).toMatch(/ASCII/i);
+    expect(validateValue('code128', 'a\u0001b')).toMatch(/control/i);
+  });
+
