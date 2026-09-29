@@ -706,3 +706,33 @@ input[type='color'] {
   top: 8px;
 }
 
+/* ---------- print media ---------- */
+
+@media print {
+  .screen-only,
+  .screen-only * {
+    display: none !important;
+  }
+
+  .print-root {
+    display: block !important;
+  }
+
+  body {
+    background: #fff;
+    margin: 0;
+    padding: 0;
+  }
+
+  .print-page {
+    box-shadow: none;
+    margin: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-label {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
