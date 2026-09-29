@@ -402,3 +402,63 @@ input[type='color'] {
   }
 }
 
+/* ---------- preview ---------- */
+
+.preview-card {
+  min-height: 120px;
+}
+
+.preview-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.barcode-item {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--surface-2);
+  max-width: 100%;
+}
+
+.barcode-svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.barcode-svg svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.barcode-item .value-line {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+  word-break: break-all;
+}
+
+.barcode-item .actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.preview-empty {
+  color: var(--text-muted);
+  padding: 26px 8px;
+  text-align: center;
+}
+
+.preview-more {
+  width: 100%;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  padding: 4px 2px;
+}
+
