@@ -218,3 +218,15 @@ describe('print sheet content', () => {
     }
   });
 
+  it('shows the readable value below every printed barcode', () => {
+    render(<App />);
+    const labels = document.querySelectorAll('.print-root .print-label');
+    expect(labels.length).toBeGreaterThan(0);
+    for (const label of labels) {
+      const text = label.querySelector('.print-text');
+      expect(text).toBeTruthy();
+      expect(text!.textContent).toBeTruthy();
+      expect(label.querySelector('.print-svg svg')).toBeTruthy();
+    }
+  });
+});
