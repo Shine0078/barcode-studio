@@ -16,6 +16,8 @@ export interface PrintConfig {
   showTextOnPrint: boolean;
   /** Stack labels vertically — one label per row, in input order. */
   stackVertical: boolean;
+  /** Draw a cut guide border around each label. */
+  showLabelBorders: boolean;
 }
 
 export const DEFAULT_PRINT_CONFIG: PrintConfig = {
@@ -32,6 +34,7 @@ export const DEFAULT_PRINT_CONFIG: PrintConfig = {
   copies: 1,
   showTextOnPrint: true,
   stackVertical: true,
+  showLabelBorders: true,
 };
 
 export function pageSizeMm(cfg: PrintConfig): { w: number; h: number } {
