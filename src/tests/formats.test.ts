@@ -96,3 +96,26 @@ describe('per-format validation', () => {
     expect(validateValue('upca', '03600029145X')).toMatch(/exactly 12/);
   });
 
+  it('upce: requires 8 digits with number system 0/1', () => {
+    expect(validateValue('upce', '01234565')).toBeNull();
+    expect(validateValue('upce', '21234565')).toMatch(/0 or 1/);
+    expect(validateValue('upce', '0123456')).toMatch(/exactly 8/);
+  });
+
+  it('itf: digits only', () => {
+    expect(validateValue('itf', '12345678')).toBeNull();
+    expect(validateValue('itf', '12345A')).toMatch(/digits only/i);
+  });
+
+  it('itf14: exactly 14 digits with valid check digit', () => {
+    expect(validateValue('itf14', '15400141288763')).toBeNull();
+    expect(validateValue('itf14', '1540014128876')).toMatch(/exactly 14/);
+    expect(validateValue('itf14', '15400141288766')).toMatch(/last digit should be 3/);
+  });
+
+  it('codabar: requires start/stop and charset', () => {
+    expect(validateValue('codabar', 'C1234D')).toBeNull();
+    expect(validateValue('codabar', '1234D')).toMatch(/start and end/i);
+    expect(validateValue('codabar', 'C123!D')).toMatch(/payload/i);
+  });
+
