@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import type { RefObject } from 'react';
 
 interface DataPanelProps {
@@ -11,8 +10,6 @@ interface DataPanelProps {
 /** Multi-line data entry, one value per line. Line numbers shown next to
  * errors refer to non-empty lines in this field. */
 export function DataPanel({ text, onChange, onSample, textareaRef }: DataPanelProps) {
-  const localRef = useRef<HTMLTextAreaElement>(null);
-  void localRef;
   return (
     <fieldset className="card">
       <legend>Barcode value(s)</legend>
