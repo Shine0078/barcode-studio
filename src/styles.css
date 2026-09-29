@@ -507,3 +507,47 @@ input[type='color'] {
   margin-bottom: 12px;
 }
 
+/* ---------- print setup ---------- */
+
+.paper-preview {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.page-thumb {
+  border: 1.5px solid var(--text-muted);
+  background: #fff;
+  position: relative;
+  box-shadow: var(--shadow);
+}
+
+.page-thumb .thumb-label {
+  position: absolute;
+  border: 1px dashed #94a3b8;
+  background: var(--accent-soft);
+}
+
+.page-caption {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+  text-align: center;
+}
+
+.layout-summary {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+
+.layout-summary strong {
+  color: var(--text);
+}
+
