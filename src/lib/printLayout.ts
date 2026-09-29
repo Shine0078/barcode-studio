@@ -38,3 +38,56 @@ export function pageSizeMm(cfg: PrintConfig): { w: number; h: number } {
       : PAPER_SIZES_MM[cfg.preset];
   return cfg.orientation === 'landscape' ? { w: base.h, h: base.w } : base;
 }
+
+export interface LabelSlot {
+  x: number;
+  y: number;
+}
+
+/** A label to print: the value encoded in the barcode plus optional extra
+ * text lines rendered below it (e.g. ITEM / QTY / COO fields), each with an
+ * optional mini barcode for scanning. */
+export interface LabelGrid {
+  cols: number;
+  rows: number;
+  slots: LabelSlot[];
+  labelW: number;
+  labelH: number;
+  fits: boolean;
+}
+
+/** Pure layout math, in mm. Positions are relative to the page's content box
+ * (inside the margins), left-aligned. Rows/cols come from config or are
+ * auto-computed to fill the printable area. */
+export function computeGrid(cfg: PrintConfig): LabelGrid {
+  const page = pageSizeMm(cfg);
+  const availW = page.w - 2 * cfg.marginMm;
+  const availH = page.h - 2 * cfg.marginMm;
+
+  const stepW = cfg.labelWidthMm + cfg.gapMm;
+  const stepH = cfg.labelHeightMm + cfg.gapMm;
+
+  const autoCols = Math.max(1, Math.floor((availW + cfg.gapMm) / stepW));
+  const autoRows = Math.max(1, Math.floor((availH + cfg.gapMm) / stepH));
+
+  const fits = cfg.labelWidthMm <= availW && cfg.labelHeightMm <= availH;
+
+  const cols = clamp(cfg.cols > 0 ? cfg.cols : autoCols, 1, MAX_COLS);
+  const rows = clamp(cfg.rows > 0 ? cfg.rows : autoRows, 1, MAX_ROWS);
+
+  const slots: LabelSlot[] = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      slots.push({
+        x: cfg.marginMm + c * stepW,
+        y: cfg.marginMm + r * stepH,
+      });
+    }
+  }
+
+  return { cols, rows, slots, labelW: cfg.labelWidthMm, labelH: cfg.labelHeightMm, fits };
+}
+
+function clamp(n: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, Math.round(n)));
+}
