@@ -73,3 +73,26 @@ describe('per-format validation', () => {
     expect(validateValue('code128', 'a\u0001b')).toMatch(/control/i);
   });
 
+  it('code39: enforces charset', () => {
+    expect(validateValue('code39', 'ABC-1234')).toBeNull();
+    expect(validateValue('code39', 'abc123')).toMatch(/A-Z/i);
+    expect(validateValue('code39', 'ABC~123')).toMatch(/A-Z/i);
+  });
+
+  it('ean13: requires 13 digits with valid check digit', () => {
+    expect(validateValue('ean13', '4006381333931')).toBeNull();
+    expect(validateValue('ean13', '400638133393')).toMatch(/exactly 13/);
+    expect(validateValue('ean13', '4006381333930')).toMatch(/last digit should be 1/);
+  });
+
+  it('ean8: requires 8 digits with valid check digit', () => {
+    expect(validateValue('ean8', '24032155')).toBeNull();
+    expect(validateValue('ean8', '2403215')).toMatch(/exactly 8/);
+    expect(validateValue('ean8', '24032159')).toMatch(/last digit should be 5/);
+  });
+
+  it('upca: requires 12 digits with valid check digit', () => {
+    expect(validateValue('upca', '036000291452')).toBeNull();
+    expect(validateValue('upca', '03600029145X')).toMatch(/exactly 12/);
+  });
+
