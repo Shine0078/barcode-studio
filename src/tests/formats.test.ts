@@ -119,3 +119,45 @@ describe('per-format validation', () => {
     expect(validateValue('codabar', 'C123!D')).toMatch(/payload/i);
   });
 
+  it('gs1-128: parses AIs and validates known lengths', () => {
+    expect(validateValue('gs1-128', '(01)00950110153403')).toBeNull();
+    expect(validateValue('gs1-128', '(21)ABC-123')).toBeNull();
+    expect(validateValue('gs1-128', '0109501101534003')).toMatch(/start with an Application Identifier/i);
+    expect(validateValue('gs1-128', '(01)0950110153400')).toMatch(/14 digits; got 13/);
+    expect(validateValue('gs1-128', '(01)09501101534002')).toMatch(/check digit is wrong: expected 1/);
+    expect(validateValue('gs1-128', '(17)221231')).toBeNull();
+    expect(validateValue('gs1-128', '(17)22123')).toMatch(/6 digits; got 5/);
+    expect(validateValue('gs1-128', '(17)')).toMatch(/has no data/);
+  });
+
+  it('2d formats accept any text', () => {
+    expect(validateValue('qrcode', 'anything at all ✓')).toBeNull();
+    expect(validateValue('datamatrix', '')).toBeNull();
+    expect(validateValue('pdf417', 'x')).toBeNull();
+  });
+});
+
+describe('render pipeline', () => {
+  it('renders valid values as SVG and returns errors for invalid ones', () => {
+    const ok = renderLine('code128', 'Hello-123', DEFAULT_STYLE);
+    expect(ok.status).toBe('valid');
+    if (ok.status === 'valid') {
+      expect(ok.svg).toMatch(/^<svg/);
+    }
+
+    const bad = renderLine('ean13', '4006381333930', DEFAULT_STYLE);
+    expect(bad.status).toBe('error');
+    if (bad.status === 'error') {
+      expect(bad.message).toMatch(/check digit/i);
+    }
+  });
+
+  it('renders every format sample through the full pipeline', () => {
+    for (const f of FORMATS) {
+      for (const sample of f.samples) {
+        const result = renderLine(f.id, sample, DEFAULT_STYLE);
+        expect(result.status, `${f.id}: ${sample}`).toBe('valid');
+      }
+    }
+  });
+
