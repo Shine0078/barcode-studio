@@ -1,5 +1,6 @@
 import { toSVG } from 'bwip-js/generic';
 import { FORMATS } from './formats';
+import { validateValue } from './validate';
 import type { StyleOptions } from './styleOptions';
 
 export type { StyleOptions };
