@@ -1,4 +1,4 @@
-import { BarcodeSvg } from './BarcodeCard';
+import { extractDimensions } from '../lib/render';
 import { pageSizeMm, type PrintConfig } from '../lib/printLayout';
 
 export interface PrintSlot {
@@ -54,6 +54,20 @@ function PrintLabel({ slot, svgs, widthMm, heightMm, showText }: {
   showText: boolean;
 }) {
   const svg = svgs.get(slot.value) ?? '';
+  const { widthPx, heightPx } = extractDimensions(svg);
+
+  const textSpaceMm = showText ? 4.6 : 0;
+  const padMm = 1.6;
+  const availW = Math.max(1, widthMm - padMm * 2);
+  const availH = Math.max(1, heightMm - textSpaceMm - padMm * 2);
+
+  let wMm = availW;
+  let hMm = heightPx > 0 ? (wMm * heightPx) / widthPx : availH;
+  if (hMm > availH) {
+    hMm = availH;
+    wMm = widthPx > 0 ? (hMm * widthPx) / heightPx : availW;
+  }
+
   const labelStyle: React.CSSProperties = {
     left: `${slot.x}mm`,
     top: `${slot.y}mm`,
@@ -62,7 +76,15 @@ function PrintLabel({ slot, svgs, widthMm, heightMm, showText }: {
   };
   return (
     <div className="print-label" style={labelStyle}>
-      {svg ? <BarcodeSvg svg={svg} /> : <span>{slot.value}</span>}
+      {svg ? (
+        <div
+          className="barcode-svg print-svg"
+          style={{ width: `${wMm}mm`, height: `${hMm}mm` }}
+          dangerouslySetInnerHTML={{ __html: svg }}
+        />
+      ) : (
+        <span>{slot.value}</span>
+      )}
       {showText && <span className="print-text">{slot.value}</span>}
     </div>
   );
