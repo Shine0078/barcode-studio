@@ -142,3 +142,51 @@ button {
   margin: 4px 0 0;
 }
 
+/* ---------- type selector ---------- */
+
+.type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 8px;
+}
+
+.type-option {
+  position: relative;
+  display: block;
+}
+
+.type-option input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  cursor: pointer;
+}
+
+.type-option span {
+  display: block;
+  padding: 9px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  text-align: center;
+  background: var(--surface-2);
+  color: var(--text);
+  transition: border-color 120ms, background 120ms;
+}
+
+.type-option:hover span {
+  border-color: #c7d2fe;
+}
+
+.type-option input:checked + span {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
+.type-option input:focus-visible + span {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
