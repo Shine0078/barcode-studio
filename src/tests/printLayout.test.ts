@@ -101,3 +101,17 @@ describe('buildPages', () => {
     expect(result.pages[1].slots).toHaveLength(6);
   });
 
+  it('truncates runaway print jobs at maxPages', () => {
+    const values = Array.from({ length: 200 }, (_, i) => `v${i}`);
+    const result = buildPages(values, 100, cfg({ labelWidthMm: 60, labelHeightMm: 30 }));
+    expect(result.pageCount).toBeGreaterThan(100);
+    expect(result.truncated).toBe(true);
+    expect(result.pages).toHaveLength(100);
+  });
+
+  it('empty input yields zero pages', () => {
+    const result = buildPages([], 1, DEFAULT_PRINT_CONFIG);
+    expect(result.pageCount).toBe(0);
+    expect(result.pages).toHaveLength(0);
+  });
+});
