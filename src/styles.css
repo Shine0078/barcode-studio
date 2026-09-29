@@ -61,3 +61,42 @@ button {
   padding: 0 16px 48px;
 }
 
+/* ---------- header ---------- */
+
+.app-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 20px 4px 16px;
+}
+
+.app-header h1 {
+  font-size: 1.45rem;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.app-header .tagline {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  margin: 2px 0 0;
+}
+
+.header-links {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.header-links a {
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.header-links a:hover {
+  text-decoration: underline;
+}
+
