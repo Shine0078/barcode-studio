@@ -27,8 +27,8 @@ export const DEFAULT_PRINT_CONFIG: PrintConfig = {
   orientation: 'portrait',
   marginMm: 10,
   gapMm: 4,
-  labelWidthMm: 80,
-  labelHeightMm: 50,
+  labelWidthMm: 190,
+  labelHeightMm: 136.5,
   rows: 0,
   cols: 0,
   copies: 1,
@@ -36,6 +36,29 @@ export const DEFAULT_PRINT_CONFIG: PrintConfig = {
   stackVertical: true,
   showLabelBorders: true,
 };
+
+/** Half-page label dimensions for the current paper and margins. */
+export function halfPageLabel(cfg: PrintConfig): { w: number; h: number } {
+  const page = pageSizeMm(cfg);
+  const w = round1(page.w - 2 * cfg.marginMm);
+  const h = round1((page.h - 2 * cfg.marginMm - cfg.gapMm) / 2);
+  return { w, h };
+}
+
+function round1(n: number): number {
+  return Math.round(n * 10) / 10;
+}
+
+export const PAPER_SIZES_MM: Record<Exclude<PaperPreset, 'custom'>, { w: number; h: number }> = {
+  letter: { w: 215.9, h: 279.4 },
+  a4: { w: 210, h: 297 },
+  a5: { w: 148, h: 210 },
+  '4x6': { w: 101.6, h: 152.4 },
+};
+
+export const MAX_COPIES = 100;
+export const MAX_ROWS = 40;
+export const MAX_COLS = 20;
 
 export function pageSizeMm(cfg: PrintConfig): { w: number; h: number } {
   const base =
