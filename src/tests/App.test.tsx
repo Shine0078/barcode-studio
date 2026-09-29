@@ -168,3 +168,53 @@ describe('template mode (Item / Qty / COO)', () => {
     for (const t of texts) expect(t).toContain('5');
   });
 
+  it('default print layout is half-page: two labels per sheet', () => {
+    const grid = computeGrid(DEFAULT_PRINT_CONFIG);
+    expect(grid.cols).toBe(1);
+    expect(grid.rows).toBe(2);
+    expect(grid.slots).toHaveLength(2);
+    expect(grid.labelW).toBeCloseTo(190, 0);
+  });
+
+  it('halfPageLabel computes the half-page box for the current paper', () => {
+    const half = halfPageLabel({ ...DEFAULT_PRINT_CONFIG, preset: 'letter' });
+    expect(half.w).toBeCloseTo(195.9, 1);
+    expect(half.h).toBeCloseTo(127.7, 1);
+  });
+
+  it('buildPages expands template entries with their lines across copies', () => {
+    const result = buildPages(
+      [
+        { value: 'A', lines: ['ITEM: A', 'QTY: 1'] },
+        { value: 'B', lines: ['ITEM: B'] },
+      ],
+      2,
+      { ...DEFAULT_PRINT_CONFIG, labelWidthMm: 60, labelHeightMm: 30 },
+    );
+    expect(result.total).toBe(4);
+    const values = result.pages[0].slots.map((s) => s.value);
+    expect(values).toEqual(['A', 'A', 'B', 'B']);
+    expect(result.pages[0].slots[0].lines).toEqual(['ITEM: A', 'QTY: 1']);
+    expect(result.pages[0].slots[3].lines).toEqual(['ITEM: B']);
+  });
+});
+
+describe('print sheet content', () => {
+  afterEach(() => cleanup());
+  it('embeds barcode SVGs with deterministic label sizing into print labels', () => {
+    render(<App />);
+    const labels = document.querySelectorAll('.print-root .print-label');
+    expect(labels.length).toBeGreaterThan(0);
+    for (const label of labels) {
+      const wrapper = label.querySelector('.print-svg') as HTMLElement | null;
+      expect(wrapper).toBeTruthy();
+      // wrapper is explicitly sized in mm with the SVG's aspect ratio —
+      // deterministic in print engines, no CSS max-height scaling.
+      expect(wrapper!.style.width).toMatch(/mm$/);
+      expect(wrapper!.style.height).toMatch(/mm$/);
+      const svg = wrapper!.querySelector('svg') as SVGSVGElement | null;
+      expect(svg).toBeTruthy();
+      expect(svg!.getAttribute('viewBox')).toBeTruthy();
+    }
+  });
+
