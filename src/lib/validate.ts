@@ -9,7 +9,7 @@ export function gtinCheckDigitValid(digits: string): boolean {
   const len = digits.length;
   let sum = 0;
   for (let i = 0; i < len - 1; i++) {
-    const weight = (len - 1 - i) % 2 === 1 ? 3 : 1;
+    const weight = (len - 2 - i) % 2 === 0 ? 3 : 1;
     sum += Number(digits[i]) * weight;
   }
   const check = (10 - (sum % 10)) % 10;
@@ -21,7 +21,7 @@ export function computeGtinCheckDigit(base: string): number {
   const len = base.length;
   let sum = 0;
   for (let i = 0; i < len; i++) {
-    const weight = (len - i) % 2 === 1 ? 3 : 1;
+    const weight = (len - 1 - i) % 2 === 0 ? 3 : 1;
     sum += Number(base[i]) * weight;
   }
   return (10 - (sum % 10)) % 10;
