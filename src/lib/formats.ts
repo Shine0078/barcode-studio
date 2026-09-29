@@ -40,7 +40,7 @@ export const FORMATS: FormatDefinition[] = [
     label: 'EAN-8',
     bcid: 'ean8',
     family: 'linear',
-    samples: ['24032150'],
+    samples: ['24032155'],
     notes: 'Exactly 8 digits with a valid check digit.',
   },
   {
@@ -72,7 +72,7 @@ export const FORMATS: FormatDefinition[] = [
     label: 'ITF-14',
     bcid: 'itf14',
     family: 'linear',
-    samples: ['15400141288766'],
+    samples: ['15400141288763'],
     notes: 'Exactly 14 digits with a valid check digit.',
   },
   {
@@ -88,7 +88,7 @@ export const FORMATS: FormatDefinition[] = [
     label: 'GS1-128',
     bcid: 'gs1-128',
     family: 'linear',
-    samples: ['(01)09501101534003', '(21)ABC-123'],
+    samples: ['(01)00950110153403', '(21)ABC-123'],
     notes:
       'GS1 Application Identifiers in parentheses, e.g. (01) + 14-digit GTIN. Check digits are verified.',
   },
