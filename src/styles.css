@@ -100,3 +100,18 @@ button {
   text-decoration: underline;
 }
 
+/* ---------- layout ---------- */
+
+.app-main {
+  display: grid;
+  grid-template-columns: minmax(340px, 460px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .app-main {
+    grid-template-columns: 1fr;
+  }
+}
+
