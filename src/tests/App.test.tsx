@@ -49,3 +49,40 @@ describe('App', () => {
     }
   });
 
+  it('does not open the print dialog while errors are unreviewed', async () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('radio', { name: 'EAN-13' }));
+    const input = screen.getByLabelText(/one value per line/i);
+    fireEvent.change(input, { target: { value: '4006381333930' } });
+    await waitFor(() => expect(screen.getAllByText(/check digit/i).length).toBeGreaterThan(0));
+
+    const printBtn = screen.getByRole('button', { name: /^Print/ });
+    fireEvent.click(printBtn);
+    expect(window.print).not.toHaveBeenCalled();
+  });
+
+  it('opens the native print dialog when the Print button is clicked with valid data', () => {
+    render(<App />);
+    const printBtn = screen.getByRole('button', { name: /^Print/ });
+    fireEvent.click(printBtn);
+    expect(window.print).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders a dedicated print layout separate from app controls', () => {
+    render(<App />);
+    const printRoot = document.querySelector('.print-root');
+    expect(printRoot).toBeTruthy();
+    expect(printRoot!.querySelector('.print-page')).toBeTruthy();
+    // the skip link and header live in .screen-only, hidden via print CSS
+    const screenOnly = document.querySelector('.screen-only');
+    expect(screenOnly).toBeTruthy();
+    expect(screenOnly!.querySelector('h1')).toBeTruthy();
+  });
+
+  it('print CSS excludes app UI and shows only the print sheet', () => {
+    const css = readFileSync(join(process.cwd(), 'src', 'styles.css'), 'utf-8');
+    expect(css).toMatch(/@media print/);
+    expect(css).toMatch(/\.screen-only[^{]*\{[^}]*display:\s*none/s);
+    expect(css).toMatch(/\.print-root[^{]*\{[^}]*display:\s*block/s);
+  });
+
