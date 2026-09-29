@@ -1,0 +1,7 @@
+{
+  // Cloudflare Pages project configuration.
+  // Deploy with: npm run deploy
+  "name": "barcode-studio",
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2026-09-29"
+}
