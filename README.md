@@ -21,6 +21,24 @@ npm run lint      # oxlint
 npm run deploy    # build + publish to Cloudflare Pages
 ```
 
+## Deploying to Cloudflare Pages
+
+The app is configured for Cloudflare Pages (`wrangler.jsonc`), and `public/_headers` adds
+security headers plus long-lived caching for hashed assets.
+
+Live site: **https://barcode-studio-25b.pages.dev/**
+
+```bash
+npx wrangler login       # one-time browser auth
+npm run deploy           # build + upload production
+npm run deploy:preview   # build + upload to a preview branch
+```
+
+Any new deployment gets its own immutable URL (`<hash>.barcode-studio-25b.pages.dev`); the
+production branch (`main`) also publishes to the root URL. The `dist/` folder is a plain
+static bundle, so it can also be drag-and-dropped into the Cloudflare dashboard or hosted on
+any other static host.
+
 ## Supported barcode types
 
 Every format listed below is generated locally by bwip-js and verified by the test suite:
