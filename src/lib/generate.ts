@@ -74,6 +74,23 @@ export function renderLine(
     const svg = toSVG(barcodeOptionsFor(formatId, value, style) as unknown as Parameters<typeof toSVG>[0]);
     return { status: 'valid', svg, value };
   } catch (e) {
-    return { status: 'error', value, message: String(e) };
+    return { status: 'error', value, message: friendlyRenderError(e) };
   }
+}
+
+function friendlyRenderError(e: unknown): string {
+  const raw = String(e instanceof Error ? e.message : e);
+  const known: [RegExp, string][] = [
+    [/text is too long/i, 'The value is too long for this barcode type.'],
+    [/too short/i, 'The value is too short for this barcode type.'],
+    [/badCheckDigit/i, 'The check digit is incorrect.'],
+    [/badCharacter/i, 'The value contains characters not supported by this barcode type.'],
+    [/start and stop/i, 'Codabar must start and end with A, B, C, or D.'],
+    [/number system/i, 'UPC-E number system must be 0 or 1.'],
+    [/GS1|AI /i, 'The GS1 value is invalid. Check Application Identifier format and lengths.'],
+  ];
+  for (const [pattern, message] of known) {
+    if (pattern.test(raw)) return message;
+  }
+  return raw;
 }
