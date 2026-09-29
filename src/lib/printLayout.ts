@@ -14,6 +14,8 @@ export interface PrintConfig {
   cols: number;
   copies: number;
   showTextOnPrint: boolean;
+  /** Stack labels vertically — one label per row, in input order. */
+  stackVertical: boolean;
 }
 
 export const DEFAULT_PRINT_CONFIG: PrintConfig = {
@@ -29,6 +31,7 @@ export const DEFAULT_PRINT_CONFIG: PrintConfig = {
   cols: 0,
   copies: 1,
   showTextOnPrint: true,
+  stackVertical: true,
 };
 
 export function pageSizeMm(cfg: PrintConfig): { w: number; h: number } {
@@ -78,7 +81,9 @@ export function computeGrid(cfg: PrintConfig): LabelGrid {
 
   const fits = cfg.labelWidthMm <= availW && cfg.labelHeightMm <= availH;
 
-  const cols = clamp(cfg.cols > 0 ? cfg.cols : autoCols, 1, MAX_COLS);
+  const cols = cfg.stackVertical
+    ? 1
+    : clamp(cfg.cols > 0 ? cfg.cols : autoCols, 1, MAX_COLS);
   const rows = clamp(cfg.rows > 0 ? cfg.rows : autoRows, 1, MAX_ROWS);
 
   const slots: LabelSlot[] = [];
