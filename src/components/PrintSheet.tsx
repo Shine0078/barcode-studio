@@ -56,7 +56,8 @@ function PrintLabel({ slot, svgs, widthMm, heightMm, showText }: {
   const svg = svgs.get(slot.value) ?? '';
   const { widthPx, heightPx } = extractDimensions(svg);
 
-  const textSpaceMm = showText ? 4.6 : 0;
+  const lines = showText ? (slot.lines ?? (slot.value ? [slot.value] : [])) : [];
+  const textSpaceMm = lines.length > 0 ? lines.length * 3.6 + 1 : 0;
   const padMm = 1.6;
   const availW = Math.max(1, widthMm - padMm * 2);
   const availH = Math.max(1, heightMm - textSpaceMm - padMm * 2);
@@ -85,7 +86,13 @@ function PrintLabel({ slot, svgs, widthMm, heightMm, showText }: {
       ) : (
         <span>{slot.value}</span>
       )}
-      {showText && <span className="print-text">{slot.value}</span>}
+      {lines.length > 0 && (
+        <div className="print-text">
+          {lines.map((l, i) => (
+            <div key={i}>{l}</div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
