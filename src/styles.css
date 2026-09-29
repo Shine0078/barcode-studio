@@ -551,3 +551,109 @@ input[type='color'] {
   color: var(--text);
 }
 
+/* ---------- print root (paper output) ---------- */
+
+.print-root {
+  display: none;
+}
+
+.print-page {
+  page-break-after: always;
+  break-after: page;
+  position: relative;
+  background: #fff;
+  overflow: hidden;
+}
+
+.print-page:last-child {
+  page-break-after: auto;
+  break-after: auto;
+}
+
+.print-label {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.print-label-bordered {
+  border: 0.3mm solid #1f2937;
+  border-radius: 1.2mm;
+  background: #fff;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.print-label .print-svg {
+  display: block;
+  flex: 0 0 auto;
+}
+
+/* The wrapper is sized with the exact SVG aspect ratio in mm, so filling
+ * it 100% preserves the symbol's proportions deterministically in print. */
+.print-label .print-svg svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.print-label .print-text {
+  flex: 0 0 auto;
+  font-size: 3.2mm;
+  line-height: 1.25;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  word-break: break-all;
+  text-align: center;
+  max-width: 100%;
+  overflow: hidden;
+  margin-top: 1mm;
+}
+
+.print-field-row {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 2mm;
+  width: 100%;
+  border-top: 0.2mm solid #cbd5e1;
+  padding: 0.7mm 0;
+}
+
+.print-field-row:first-of-type {
+  border-top: 0.3mm solid #1f2937;
+}
+
+.print-field-name {
+  flex: 0 0 12mm;
+  font-size: 2.4mm;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #334155;
+  text-align: left;
+}
+
+.print-field-value {
+  flex: 1 1 auto;
+  font-size: 3.2mm;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  text-align: left;
+  word-break: break-all;
+  overflow: hidden;
+}
+
+.print-mini-slot {
+  flex: 0 0 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.print-mini {
+  flex: 0 0 auto;
+}
+
