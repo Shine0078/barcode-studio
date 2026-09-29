@@ -50,6 +50,7 @@ export interface LabelSlot {
 export interface LabelEntry {
   value: string;
   lines?: string[];
+  extras?: { text: string; value: string }[];
 }
 
 export interface LabelGrid {
@@ -98,7 +99,7 @@ function clamp(n: number, min: number, max: number): number {
 }
 
 export interface PrintPage {
-  slots: { x: number; y: number; value: string; lines?: string[] }[];
+  slots: { x: number; y: number; value: string; lines?: string[]; extras?: { text: string; value: string }[] }[];
 }
 
 /** Expand entries × copies, cut into pages, and cap runaway print jobs. */
@@ -119,7 +120,7 @@ export function buildPages(values: (string | LabelEntry)[], copies: number, cfg:
       .slice(0, perPage)
       .map((slot, i) => {
         const label = labels[p * perPage + i];
-        return { ...slot, value: label?.value ?? '', lines: label?.lines };
+        return { ...slot, value: label?.value ?? '', lines: label?.lines, extras: label?.extras };
       })
       .filter((s) => s.value !== '');
     pages.push({ slots });
