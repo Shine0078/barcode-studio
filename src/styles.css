@@ -462,3 +462,48 @@ input[type='color'] {
   padding: 4px 2px;
 }
 
+/* ---------- errors ---------- */
+
+.error-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.error-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: var(--danger-bg);
+  color: var(--danger);
+  font-size: 0.86rem;
+  margin-bottom: 6px;
+}
+
+.error-item .line-no {
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.error-item .err-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  word-break: break-all;
+}
+
+.error-item button {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.error-summary {
+  background: var(--danger-bg);
+  border: 1px solid #fecaca;
+  color: var(--danger);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+}
+
