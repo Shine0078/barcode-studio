@@ -307,3 +307,22 @@ input[type='color'] {
   margin-top: 10px;
 }
 
+/* ---------- checkbox ---------- */
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.88rem;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+.check input {
+  width: 17px;
+  height: 17px;
+  margin: 2px 0 0;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}
+
