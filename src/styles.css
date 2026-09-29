@@ -326,3 +326,33 @@ input[type='color'] {
   flex-shrink: 0;
 }
 
+/* ---------- data mode switch ---------- */
+
+.mode-switch {
+  display: flex;
+  gap: 8px;
+}
+
+.mode-switch button {
+  flex: 1;
+  padding: 9px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.86rem;
+  cursor: pointer;
+  transition: border-color 120ms, background 120ms;
+}
+
+.mode-switch button:hover {
+  border-color: #c7d2fe;
+}
+
+.mode-switch button.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
