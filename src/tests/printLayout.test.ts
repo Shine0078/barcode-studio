@@ -38,3 +38,35 @@ describe('page sizes', () => {
 });
 
 describe('computeGrid', () => {
+  it('auto-computes rows/cols to fill an A4 page', () => {
+    const grid = computeGrid(cfg({ labelWidthMm: 60, labelHeightMm: 30, marginMm: 10, gapMm: 4 }));
+    // width: 190mm avail; step 64 → 2 cols (floor(194/64)=2? (190+4)/64 = 3.03 → 3)
+    // height: 277mm avail; step 34 → 8 rows ((277+4)/34 = 8.26)
+    expect(grid.cols).toBe(3);
+    expect(grid.rows).toBe(8);
+    expect(grid.slots).toHaveLength(24);
+  });
+
+  it('slot positions start at the margin and advance by label + gap', () => {
+    const grid = computeGrid(cfg({ labelWidthMm: 50, labelHeightMm: 25, marginMm: 10, gapMm: 5 }));
+    expect(grid.slots[0]).toEqual({ x: 10, y: 10 });
+    expect(grid.slots[1]).toEqual({ x: 65, y: 10 });
+    expect(grid.slots[3]).toEqual({ x: 10, y: 40 });
+  });
+
+  it('stacking forces one column, preserving vertical input order', () => {
+    const grid = computeGrid(cfg({ stackVertical: true, labelWidthMm: 60, labelHeightMm: 30 }));
+    expect(grid.cols).toBe(1);
+    expect(grid.rows).toBe(8);
+    // all labels in a single column: x stays at the margin
+    for (const slot of grid.slots) expect(slot.x).toBe(10);
+    expect(grid.slots[1]).toEqual({ x: 10, y: 44 });
+  });
+
+  it('explicit rows/cols override auto computation', () => {
+    const grid = computeGrid(cfg({ rows: 2, cols: 3 }));
+    expect(grid.rows).toBe(2);
+    expect(grid.cols).toBe(3);
+    expect(grid.slots).toHaveLength(6);
+  });
+
