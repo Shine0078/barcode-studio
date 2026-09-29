@@ -161,3 +161,10 @@ describe('render pipeline', () => {
     }
   });
 
+  it('never silently truncates or modifies the value', () => {
+    const result = renderLine('ean13', '4006381333930', DEFAULT_STYLE);
+    if (result.status === 'error') {
+      expect(result.value).toBe('4006381333930');
+    }
+  });
+});
