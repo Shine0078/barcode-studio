@@ -47,6 +47,10 @@ export interface LabelSlot {
 /** A label to print: the value encoded in the barcode plus optional extra
  * text lines rendered below it (e.g. ITEM / QTY / COO fields), each with an
  * optional mini barcode for scanning. */
+export interface LabelEntry {
+  value: string;
+}
+
 export interface LabelGrid {
   cols: number;
   rows: number;
@@ -90,4 +94,34 @@ export function computeGrid(cfg: PrintConfig): LabelGrid {
 
 function clamp(n: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, Math.round(n)));
+}
+
+export interface PrintPage {
+  slots: { x: number; y: number; value: string }[];
+}
+
+/** Expand entries × copies, cut into pages, and cap runaway print jobs. */
+export function buildPages(values: (string | LabelEntry)[], copies: number, cfg: PrintConfig, maxPages = 100) {
+  const grid = computeGrid(cfg);
+  const perPage = grid.rows * grid.cols;
+  const labels: LabelEntry[] = [];
+  for (const v of values) {
+    const entry = typeof v === 'string' ? { value: v } : v;
+    for (let i = 0; i < copies; i++) labels.push(entry);
+  }
+  const total = labels.length;
+  const pageCount = perPage > 0 ? Math.ceil(total / perPage) : 0;
+  const pages: PrintPage[] = [];
+  const renderedPages = Math.min(pageCount, maxPages);
+  for (let p = 0; p < renderedPages; p++) {
+    const slots = grid.slots
+      .slice(0, perPage)
+      .map((slot, i) => {
+        const label = labels[p * perPage + i];
+        return { ...slot, value: label?.value ?? '' };
+      })
+      .filter((s) => s.value !== '');
+    pages.push({ slots });
+  }
+  return { grid, pages, total, perPage, pageCount, truncated: pageCount > maxPages, fits: grid.fits };
 }
