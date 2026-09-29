@@ -49,6 +49,7 @@ export interface LabelSlot {
  * optional mini barcode for scanning. */
 export interface LabelEntry {
   value: string;
+  lines?: string[];
 }
 
 export interface LabelGrid {
@@ -97,7 +98,7 @@ function clamp(n: number, min: number, max: number): number {
 }
 
 export interface PrintPage {
-  slots: { x: number; y: number; value: string }[];
+  slots: { x: number; y: number; value: string; lines?: string[] }[];
 }
 
 /** Expand entries × copies, cut into pages, and cap runaway print jobs. */
@@ -118,7 +119,7 @@ export function buildPages(values: (string | LabelEntry)[], copies: number, cfg:
       .slice(0, perPage)
       .map((slot, i) => {
         const label = labels[p * perPage + i];
-        return { ...slot, value: label?.value ?? '' };
+        return { ...slot, value: label?.value ?? '', lines: label?.lines };
       })
       .filter((s) => s.value !== '');
     pages.push({ slots });
