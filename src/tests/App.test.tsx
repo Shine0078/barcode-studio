@@ -84,6 +84,13 @@ describe('App', () => {
     expect(css).toMatch(/@media print/);
     expect(css).toMatch(/\.screen-only[^{]*\{[^}]*display:\s*none/s);
     expect(css).toMatch(/\.print-root[^{]*\{[^}]*display:\s*block/s);
+    // Direct children such as the absolutely positioned skip link must not
+    // leak into print pagination and create a trailing blank sheet.
+    expect(css).toMatch(/#root\s*>\s*:not\(\.print-root\)[^{]*\{[^}]*display:\s*none/s);
+    // The screen-only 100vh flex root must also be removed from the print
+    // formatting context so it cannot overflow the physical page boundary.
+    expect(css).toMatch(/@media print[\s\S]*#root\s*\{[^}]*display:\s*block/s);
+    expect(css).toMatch(/@media print[\s\S]*min-height:\s*0/s);
   });
 
   it('changing format resets options and samples without leaking state', () => {

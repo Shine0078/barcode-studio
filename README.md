@@ -1,5 +1,6 @@
 # Free Barcode Studio
 
+
 A completely free, browser-based barcode generator. Create barcodes in 11 symbologies, customize their appearance, arrange them on printable sheets, and print or download — all without an account, backend, or upload. Barcode data never leaves your browser.
 
 Built with React, TypeScript, and Vite. Barcode rendering is powered by [bwip-js](https://github.com/metafloor/bwip-js) (Barcode Writer in Pure JavaScript).

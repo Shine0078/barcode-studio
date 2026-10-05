@@ -709,19 +709,41 @@ input[type='color'] {
 /* ---------- print media ---------- */
 
 @media print {
+  /* Keep only the physical label sheets in the print formatting context.
+   * The skip link is a direct child of #root (outside .screen-only), and its
+   * off-screen positioning can otherwise make Chromium paginate a blank
+   * overflow page. */
+  #root > :not(.print-root),
   .screen-only,
   .screen-only * {
     display: none !important;
   }
 
+  html,
+  body,
+  #root {
+    width: auto;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* The screen layout makes #root a min-height: 100vh flex container. Reset
+   * it for print so that fractional page-size rounding cannot create a
+   * trailing blank sheet. */
+  #root {
+    display: block;
+  }
+
   .print-root {
     display: block !important;
+    margin: 0;
+    padding: 0;
   }
 
   body {
     background: #fff;
-    margin: 0;
-    padding: 0;
   }
 
   .print-page {
