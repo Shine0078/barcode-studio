@@ -71,9 +71,15 @@ describe('App', () => {
   it('renders a dedicated print layout separate from app controls', () => {
     render(<App />);
     const printRoot = document.querySelector('.print-root');
+    const appShell = document.querySelector('.app-shell');
     expect(printRoot).toBeTruthy();
+    expect(appShell).toBeTruthy();
     expect(printRoot!.querySelector('.print-page')).toBeTruthy();
-    // the skip link and header live in .screen-only, hidden via print CSS
+    // The print sheet must be a direct sibling of the app shell. In production
+    // their shared parent is #root, whose other direct children print CSS hides.
+    expect(printRoot!.parentElement).toBe(appShell!.parentElement);
+    expect(appShell!.contains(printRoot)).toBe(false);
+    // The header lives in .screen-only, hidden via print CSS.
     const screenOnly = document.querySelector('.screen-only');
     expect(screenOnly).toBeTruthy();
     expect(screenOnly!.querySelector('h1')).toBeTruthy();

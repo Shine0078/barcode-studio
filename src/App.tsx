@@ -243,12 +243,13 @@ export default function App() {
   const patchPrint = (patch: Partial<PrintConfig>) => setPrintConfig((c) => ({ ...c, ...patch }));
 
   return (
-    <div className="app-shell">
-      <a href="#main" className="skip-link">
-        Skip to generator
-      </a>
+    <>
+      <div className="app-shell">
+        <a href="#main" className="skip-link">
+          Skip to generator
+        </a>
 
-      <div className="screen-only">
+        <div className="screen-only">
         <header className="app-header">
           <div>
             <h1>Free Barcode Studio</h1>
@@ -387,6 +388,7 @@ export default function App() {
             {toast}
           </div>
         )}
+        </div>
       </div>
 
       <PrintSheet
@@ -398,6 +400,6 @@ export default function App() {
         labelHeightMm={print.grid.labelH}
         showText={printConfig.showTextOnPrint}
       />
-    </div>
+    </>
   );
 }
