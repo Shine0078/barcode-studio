@@ -10,11 +10,13 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "smoke": "node scripts/smoke.mjs",
     "deploy": "npm run build && wrangler pages deploy dist --project-name=barcode-studio --branch=main",
     "deploy:preview": "npm run build && wrangler pages deploy dist --project-name=barcode-studio --branch=preview"
   },
   "dependencies": {
     "bwip-js": "^4.11.4",
+    "jszip": "^3.10.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
@@ -28,6 +30,7 @@
     "@vitejs/plugin-react": "^6.1.1",
     "jsdom": "^29.1.1",
     "oxlint": "^1.81.0",
+    "playwright-core": "^1.56.1",
     "typescript": "~6.0.2",
     "vite": "^8.3.0",
     "vitest": "^5.0.2",

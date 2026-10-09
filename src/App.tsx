@@ -1,7 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { TypeSelector } from './components/TypeSelector';
 import { DataPanel } from './components/DataPanel';
-import { TemplatePanel, makeEntryLines, makeEntryLines2, makeEntryExtras, type TemplateEntry } from './components/TemplatePanel';
+import { TemplatePanel } from './components/TemplatePanel';
+import { makeEntryLines, makeEntryLines2, makeEntryExtras, type TemplateEntry } from './lib/template';
 import { StylePanel } from './components/StylePanel';
 import { ErrorsPanel } from './components/ErrorsPanel';
 import { PrintPanel } from './components/PrintPanel';
@@ -9,6 +10,8 @@ import { BarcodeCard } from './components/BarcodeCard';
 import { PrintSheet } from './components/PrintSheet';
 import { FORMATS, getFormat } from './lib/formats';
 import { renderLine } from './lib/generate';
+import { parseValueLines } from './lib/input';
+import { downloadBarcodeZip, type BulkFormat } from './lib/bulkDownload';
 import type { StyleOptions } from './lib/styleOptions';
 import { sampleValuesFor, styleOptionsFor } from './lib/styleOptions';
 import {
@@ -39,6 +42,8 @@ export default function App() {
   const [printConfig, setPrintConfig] = useState<PrintConfig>(DEFAULT_PRINT_CONFIG);
   const [reviewed, setReviewed] = useState(false);
   const [toast, setToast] = useState('');
+  const [exportBusy, setExportBusy] = useState(false);
+  const [exportError, setExportError] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const format = getFormat(formatId);
@@ -59,13 +64,10 @@ export default function App() {
 
   const errors = useMemo(() => {
     if (mode === 'simple') {
-      let index = 0;
       const out: { line: number; value: string; reason: string }[] = [];
-      for (const raw of text.split('\n')) {
-        if (raw.trim().length === 0) continue;
-        index++;
-        const r = renderLine(formatId, raw, style);
-        if (r.status === 'error') out.push({ line: index, value: r.value, reason: r.message });
+      for (const input of parseValueLines(text)) {
+        const r = renderLine(formatId, input.value, style);
+        if (r.status === 'error') out.push({ line: input.line, value: r.value, reason: r.message });
       }
       return out;
     }
@@ -93,11 +95,10 @@ export default function App() {
   /* Simple mode data */
   const validLines = useMemo(() => {
     if (mode !== 'simple') return [];
-    const out: { svg: string; value: string }[] = [];
-    for (const raw of text.split('\n')) {
-      if (raw.trim().length === 0) continue;
-      const r = renderLine(formatId, raw, style);
-      if (r.status === 'valid') out.push({ svg: r.svg, value: r.value });
+    const out: { svg: string; value: string; caption?: string }[] = [];
+    for (const input of parseValueLines(text)) {
+      const r = renderLine(formatId, input.value, style);
+      if (r.status === 'valid') out.push({ svg: r.svg, value: r.value, caption: input.caption });
     }
     return out;
   }, [mode, text, formatId, style]);
@@ -174,7 +175,7 @@ export default function App() {
   }, [miniValues, style]);
 
   const printLabels = useMemo((): LabelEntry[] => {
-    if (mode === 'simple') return uniqueValid.map((v) => ({ value: v }));
+    if (mode === 'simple') return validLines.map((v) => ({ value: v.value, ...(v.caption ? { lines: [v.caption] } : {}) }));
     const out: LabelEntry[] = [];
     for (const { entry } of validEntries) {
       const extras = makeEntryExtras(entry);
@@ -184,7 +185,7 @@ export default function App() {
       }
     }
     return out;
-  }, [mode, uniqueValid, validEntries]);
+  }, [mode, validLines, validEntries]);
 
   const print = useMemo(
     () => buildPages(printLabels, printConfig.copies, printConfig),
@@ -193,7 +194,7 @@ export default function App() {
 
   const previewCards =
     mode === 'simple'
-      ? validLines.map((v) => ({ svg: v.svg, value: v.value, lines: undefined as string[] | undefined }))
+      ? validLines.map((v) => ({ svg: v.svg, value: v.value, lines: v.caption ? [v.caption] : undefined }))
       : validEntries.flatMap((v) => {
           const cards = [{ svg: v.svg, value: v.entry.item, lines: makeEntryLines(v.entry) }];
           if (v.svg2) cards.push({ svg: v.svg2, value: v.entry.item2.trim(), lines: makeEntryLines2(v.entry) });
@@ -208,6 +209,24 @@ export default function App() {
 
   const onPrint = () => {
     window.print();
+  };
+
+  const exportAll = async (format: BulkFormat) => {
+    const items = mode === 'simple'
+      ? validLines
+      : validEntries.flatMap((v) => [
+          { value: v.entry.item, svg: v.svg },
+          ...(v.svg2 ? [{ value: v.entry.item2.trim(), svg: v.svg2 }] : []),
+        ]);
+    setExportBusy(true);
+    setExportError('');
+    try {
+      await downloadBarcodeZip(items, format);
+    } catch (err) {
+      setExportError(err instanceof Error ? err.message : 'Could not prepare the ZIP download.');
+    } finally {
+      setExportBusy(false);
+    }
   };
 
   const onReview = () => {
@@ -345,6 +364,20 @@ export default function App() {
                   {previewCards.slice(0, MAX_PREVIEW_ITEMS).map((c, i) => (
                     <BarcodeCard key={i} svg={c.svg} value={c.value} formatId={formatId} lines={c.lines} />
                   ))}
+                </div>
+              )}
+              {previewCards.length > 0 && (
+                <div className="btn-row bulk-actions">
+                  <button type="button" className="btn btn-small" disabled={exportBusy || previewCards.length > 500}
+                    onClick={() => { void exportAll('svg'); }}>
+                    {exportBusy ? 'Preparing files…' : 'Download all SVG (ZIP)'}
+                  </button>
+                  <button type="button" className="btn btn-small" disabled={exportBusy || previewCards.length > 500}
+                    onClick={() => { void exportAll('png'); }}>
+                    Download all PNG (ZIP)
+                  </button>
+                  {previewCards.length > 500 && <span className="field hint">ZIP download supports up to 500 barcodes at a time.</span>}
+                  {exportError && <p role="alert" className="field hint" style={{ color: 'var(--danger)' }}>{exportError}</p>}
                 </div>
               )}
               {previewCards.length > MAX_PREVIEW_ITEMS && (
