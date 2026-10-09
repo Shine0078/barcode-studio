@@ -2,7 +2,10 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: no-referrer
   X-Frame-Options: DENY
-  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  X-Permitted-Cross-Domain-Policies: none
+  Strict-Transport-Security: max-age=31536000
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; upgrade-insecure-requests
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
