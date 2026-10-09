@@ -1,7 +1,7 @@
 # Free Barcode Studio
 
 
-A completely free, browser-based barcode generator. Create barcodes in 11 symbologies, customize their appearance, arrange them on printable sheets, and print or download — all without an account, backend, or upload. Barcode data never leaves your browser.
+A completely free, browser-based barcode generator. Create barcodes in 13 symbologies, customize their appearance, arrange them on printable sheets, and print or download — all without an account, backend, or upload. Barcode data never leaves your browser.
 
 Built with React, TypeScript, and Vite. Barcode rendering is powered by [bwip-js](https://github.com/metafloor/bwip-js) (Barcode Writer in Pure JavaScript).
 
@@ -17,7 +17,9 @@ Other commands:
 ```bash
 npm run build     # type-check + production build to dist/
 npm run preview   # serve the production build locally
-npm run test      # run all tests (vitest, 49 tests)
+npm run test      # run the automated validation, print and workflow suites
+npm run smoke     # Chromium smoke tests against local production preview
+npm run smoke -- --url=https://barcode-studio-25b.pages.dev/   # deployed production smoke test
 npm run lint      # oxlint
 npm run deploy    # build + publish to Cloudflare Pages
 ```
@@ -64,9 +66,11 @@ Validation is per-line and immediate. Invalid lines show a clear reason (wrong d
 
 ## Features
 
-- **Single or bulk values** — enter one value per line; the preview and print sheet update live.
+- **Single or bulk values** — enter one value per line; the preview and print sheet update live. Paste two columns separated by a tab to include a custom caption below the symbol.
+- **CSV / TSV import** — load up to 5,000 values directly from a local file, with optional second-column captions; files never leave the browser.
+- **Number sequences** — generate sequential barcode values with configurable prefix, suffix, start, step and zero padding.
 - **Appearance controls** — module size (scale), barcode height, readable-value toggle, foreground/background colors, plus format-specific options (QR and PDF417 error correction).
-- **Downloads** — each barcode can be downloaded as SVG or PNG (rasterized at 3× for sharpness) and its value copied to the clipboard.
+- **Downloads** — each barcode can be downloaded as SVG or PNG (rasterized at 3× for sharpness) and its value copied to the clipboard. Export up to 500 barcodes at once as an SVG or PNG ZIP bundle; duplicate values receive distinct filenames.
 - **Print setup** — paper presets (US Letter, A4, A5, 4×6 in) or custom page size, portrait/landscape, page margins, gap between labels, label width/height, auto or manual rows/columns per page, copies per value, and an option to print the readable value under each barcode. A live page preview shows the layout before printing.
 - **Bulk workflow** — invalid lines are listed with line numbers and a "Fix" button that jumps to and selects the line in the editor. Printing requires acknowledging that invalid lines are skipped, after which all valid barcodes are laid out across pages.
 
@@ -88,7 +92,10 @@ For best results in the print dialog:
 - If your driver scales the print job ("Fit to page"), physical barcode dimensions may change — print at 100% scale when size compliance matters.
 - Always test-print and scan a page with a real scanner before production use.
 
-## Privacy
+## Privacy and site security
+
+Deployment controls, responsible troubleshooting of workplace web filters, and the release checklist are documented in [docs/SECURITY.md](docs/SECURITY.md). Company network restrictions cannot be bypassed by changing application code alone.
+
 
 Barcode values are processed entirely in the browser with client-side JavaScript. Nothing is sent to a server — there is no backend, no account, no analytics, no ads, and no watermark. The site works offline once loaded.
 
