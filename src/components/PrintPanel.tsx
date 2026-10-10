@@ -154,6 +154,13 @@ export function PrintPanel(props: PrintPanelProps) {
         >
           Half page (2 labels per sheet)
         </button>
+        <button
+          type="button"
+          className="btn btn-small"
+          onClick={() => onChange({ labelWidthMm: 40, labelHeightMm: 40, rows: 2, cols: 1, gapMm: 10 })}
+        >
+          40 × 40 mm labels
+        </button>
       </div>
 
       <div className="row">

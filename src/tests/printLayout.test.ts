@@ -11,6 +11,9 @@ import {
 const cfg = (patch: Partial<PrintConfig>): PrintConfig => ({
   ...DEFAULT_PRINT_CONFIG,
   stackVertical: false,
+  rows: 0,
+  cols: 0,
+  gapMm: 4,
   ...patch,
 });
 

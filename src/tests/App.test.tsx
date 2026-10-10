@@ -181,18 +181,32 @@ describe('template mode (Item / Qty / COO)', () => {
     for (const t of texts) expect(t).toContain('5');
   });
 
-  it('default print layout is half-page: two labels per sheet', () => {
+  it('defaults to 40 mm square labels instead of half-page labels', () => {
     const grid = computeGrid(DEFAULT_PRINT_CONFIG);
     expect(grid.cols).toBe(1);
     expect(grid.rows).toBe(2);
     expect(grid.slots).toHaveLength(2);
-    expect(grid.labelW).toBeCloseTo(190, 0);
+    expect(grid.labelW).toBe(40);
+    expect(grid.labelH).toBe(40);
+  });
+
+  it('starts with 40 mm label dimensions and restores them after half-page mode', () => {
+    render(<App />);
+    const width = screen.getByLabelText('Label width (mm)') as HTMLInputElement;
+    const height = screen.getByLabelText('Label height (mm)') as HTMLInputElement;
+    expect(width.value).toBe('40');
+    expect(height.value).toBe('40');
+    fireEvent.click(screen.getByRole('button', { name: /half page/i }));
+    expect(width.value).toBe('190');
+    fireEvent.click(screen.getByRole('button', { name: /40 × 40 mm/i }));
+    expect(width.value).toBe('40');
+    expect(height.value).toBe('40');
   });
 
   it('halfPageLabel computes the half-page box for the current paper', () => {
     const half = halfPageLabel({ ...DEFAULT_PRINT_CONFIG, preset: 'letter' });
     expect(half.w).toBeCloseTo(195.9, 1);
-    expect(half.h).toBeCloseTo(127.7, 1);
+    expect(half.h).toBeCloseTo(124.7, 1);
   });
 
   it('buildPages expands template entries with their lines across copies', () => {
@@ -202,7 +216,7 @@ describe('template mode (Item / Qty / COO)', () => {
         { value: 'B', lines: ['ITEM: B'] },
       ],
       2,
-      { ...DEFAULT_PRINT_CONFIG, labelWidthMm: 60, labelHeightMm: 30 },
+      { ...DEFAULT_PRINT_CONFIG, labelWidthMm: 60, labelHeightMm: 30, rows: 4 },
     );
     expect(result.total).toBe(4);
     const values = result.pages[0].slots.map((s) => s.value);
