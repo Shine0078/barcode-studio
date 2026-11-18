@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "ignorePatterns": ["public/bol-generator/vendor/**"],
+  "ignorePatterns": ["public/bol-generator/vendor/**", "public/wtw-labels/vendor/**"],
   "plugins": ["react", "typescript", "oxc"],
   "rules": {
     "react/rules-of-hooks": "error",

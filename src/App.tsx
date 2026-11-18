@@ -278,6 +278,7 @@ export default function App() {
           </div>
           <nav className="header-links" aria-label="Studio tools">
             <a href={`${import.meta.env.BASE_URL}bol-generator/`}>BOL Generator</a>
+            <a href="/wtw-labels/">WTW Label Generator</a>
             {FORMATS.length} formats
           </nav>
         </header>
