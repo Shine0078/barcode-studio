@@ -1,4 +1,4 @@
-import {parseRows,makePdf} from './labels.mjs';
+import {parseRows,makePdf} from './labels.mjs?v=lp1';
 const byId = id => document.getElementById(id);
 const po = byId('po'), table = byId('rows'), generate = byId('generate');
 const status = byId('status'), download = byId('download'), print = byId('print');
@@ -24,7 +24,7 @@ generate.onclick = async () => {
   const current = revision;
   generate.disabled = true;
   try {
-    const data = await makePdf(window.PDFLib,po.value.trim(),rows);
+    const data = await makePdf(window.PDFLib,po.value.trim(),rows,window.bwipjs);
     if(current!==revision) return;
     fileUrl = URL.createObjectURL(new Blob([data],{type:'application/pdf'}));
     download.href = print.href = fileUrl;
