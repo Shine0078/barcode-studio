@@ -276,7 +276,8 @@ export default function App() {
               Generate, customize and print barcodes — 100% in your browser. No account, no uploads.
             </p>
           </div>
-          <nav className="header-links" aria-label="Formats">
+          <nav className="header-links" aria-label="Studio tools">
+            <a href={`${import.meta.env.BASE_URL}bol-generator/`}>BOL Generator</a>
             {FORMATS.length} formats
           </nav>
         </header>
