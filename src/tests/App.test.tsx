@@ -181,26 +181,41 @@ describe('template mode (Item / Qty / COO)', () => {
     for (const t of texts) expect(t).toContain('5');
   });
 
-  it('defaults to 40 mm square labels instead of half-page labels', () => {
+  it('starts with the requested A4 print layout defaults', () => {
     const grid = computeGrid(DEFAULT_PRINT_CONFIG);
+    expect(DEFAULT_PRINT_CONFIG.preset).toBe('a4');
+    expect(DEFAULT_PRINT_CONFIG.orientation).toBe('portrait');
+    expect(DEFAULT_PRINT_CONFIG.marginMm).toBe(10);
+    expect(DEFAULT_PRINT_CONFIG.gapMm).toBe(10);
+    expect(DEFAULT_PRINT_CONFIG.copies).toBe(1);
     expect(grid.cols).toBe(1);
-    expect(grid.rows).toBe(2);
-    expect(grid.slots).toHaveLength(2);
-    expect(grid.labelW).toBe(40);
-    expect(grid.labelH).toBe(40);
+    expect(grid.rows).toBe(3);
+    expect(grid.slots).toHaveLength(3);
+    expect(grid.labelW).toBe(80);
+    expect(grid.labelH).toBe(70);
   });
 
-  it('starts with 40 mm label dimensions and restores them after half-page mode', () => {
+  it('starts with 80 × 70 mm label dimensions and can apply the 40 mm preset', () => {
     render(<App />);
     const width = screen.getByLabelText('Label width (mm)') as HTMLInputElement;
     const height = screen.getByLabelText('Label height (mm)') as HTMLInputElement;
-    expect(width.value).toBe('40');
-    expect(height.value).toBe('40');
+    expect(width.value).toBe('80');
+    expect(height.value).toBe('70');
     fireEvent.click(screen.getByRole('button', { name: /half page/i }));
     expect(width.value).toBe('190');
     fireEvent.click(screen.getByRole('button', { name: /40 × 40 mm/i }));
     expect(width.value).toBe('40');
     expect(height.value).toBe('40');
+  });
+
+  it('keeps columns per page editable while vertical stacking is enabled', () => {
+    render(<App />);
+    const columns = screen.getByLabelText('Columns per page') as HTMLInputElement;
+    expect(screen.getByLabelText(/Stack labels vertically/i)).toBeChecked();
+    expect(columns).toBeEnabled();
+    fireEvent.change(columns, { target: { value: '2' } });
+    expect(columns.value).toBe('2');
+    expect(screen.queryByText(/Locked to 1 while stacking/i)).not.toBeInTheDocument();
   });
 
   it('halfPageLabel computes the half-page box for the current paper', () => {

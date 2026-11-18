@@ -14,7 +14,7 @@ export interface PrintConfig {
   cols: number;
   copies: number;
   showTextOnPrint: boolean;
-  /** Stack labels vertically — one label per row, in input order. */
+  /** Fill each column from top to bottom, in input order. */
   stackVertical: boolean;
   /** Draw a cut guide border around each label. */
   showLabelBorders: boolean;
@@ -27,9 +27,9 @@ export const DEFAULT_PRINT_CONFIG: PrintConfig = {
   orientation: 'portrait',
   marginMm: 10,
   gapMm: 10,
-  labelWidthMm: 40,
-  labelHeightMm: 40,
-  rows: 2,
+  labelWidthMm: 80,
+  labelHeightMm: 70,
+  rows: 3,
   cols: 1,
   copies: 1,
   showTextOnPrint: true,
@@ -107,18 +107,23 @@ export function computeGrid(cfg: PrintConfig): LabelGrid {
 
   const fits = cfg.labelWidthMm <= availW && cfg.labelHeightMm <= availH;
 
-  const cols = cfg.stackVertical
-    ? 1
-    : clamp(cfg.cols > 0 ? cfg.cols : autoCols, 1, MAX_COLS);
+  const cols = clamp(cfg.cols > 0 ? cfg.cols : autoCols, 1, MAX_COLS);
   const rows = clamp(cfg.rows > 0 ? cfg.rows : autoRows, 1, MAX_ROWS);
 
   const slots: LabelSlot[] = [];
-  for (let r = 0; r < rows; r++) {
+  const addSlot = (r: number, c: number) => {
+    slots.push({
+      x: cfg.marginMm + c * stepW,
+      y: cfg.marginMm + r * stepH,
+    });
+  };
+  if (cfg.stackVertical) {
     for (let c = 0; c < cols; c++) {
-      slots.push({
-        x: cfg.marginMm + c * stepW,
-        y: cfg.marginMm + r * stepH,
-      });
+      for (let r = 0; r < rows; r++) addSlot(r, c);
+    }
+  } else {
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) addSlot(r, c);
     }
   }
 

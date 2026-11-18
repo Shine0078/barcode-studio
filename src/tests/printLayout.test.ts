@@ -57,13 +57,18 @@ describe('computeGrid', () => {
     expect(grid.slots[3]).toEqual({ x: 10, y: 40 });
   });
 
-  it('stacking forces one column, preserving vertical input order', () => {
-    const grid = computeGrid(cfg({ stackVertical: true, labelWidthMm: 60, labelHeightMm: 30 }));
-    expect(grid.cols).toBe(1);
-    expect(grid.rows).toBe(8);
-    // all labels in a single column: x stays at the margin
-    for (const slot of grid.slots) expect(slot.x).toBe(10);
-    expect(grid.slots[1]).toEqual({ x: 10, y: 44 });
+  it('stacking preserves editable columns and fills them top to bottom', () => {
+    const grid = computeGrid(
+      cfg({ stackVertical: true, rows: 2, cols: 2, labelWidthMm: 60, labelHeightMm: 30 }),
+    );
+    expect(grid.cols).toBe(2);
+    expect(grid.rows).toBe(2);
+    expect(grid.slots).toEqual([
+      { x: 10, y: 10 },
+      { x: 10, y: 44 },
+      { x: 74, y: 10 },
+      { x: 74, y: 44 },
+    ]);
   });
 
   it('explicit rows/cols override auto computation', () => {

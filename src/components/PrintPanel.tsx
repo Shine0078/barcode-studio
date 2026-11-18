@@ -184,10 +184,9 @@ export function PrintPanel(props: PrintPanelProps) {
             min={0}
             max={20}
             value={config.cols}
-            disabled={config.stackVertical}
             onChange={(e) => onChange({ cols: clamp(Number(e.target.value), 0, 20) })}
           />
-          <p className="hint">{config.stackVertical ? 'Locked to 1 while stacking' : '0 = auto from label size'}</p>
+          <p className="hint">0 = auto from label size</p>
         </div>
         <div className="field">
           <label htmlFor="print-copies">Copies per value</label>
@@ -209,7 +208,7 @@ export function PrintPanel(props: PrintPanelProps) {
           checked={config.stackVertical}
           onChange={(e) => onChange({ stackVertical: e.target.checked })}
         />
-        Stack one label per row — each value prints on its own line, in the order entered
+        Stack labels vertically — fill each column from top to bottom, in the order entered
       </label>
 
       <label className="check">
